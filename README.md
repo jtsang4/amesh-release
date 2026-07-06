@@ -1,6 +1,20 @@
 # amesh release
 
-Public binary distribution for amesh.
+Public binary and container image distribution for amesh.
+
+## Run the hub with Docker
+
+The container image runs the amesh hub (multi-arch: amd64/arm64):
+
+```sh
+docker run -d --name amesh-hub \
+  -p 8787:8787 \
+  -v amesh-hub:/data \
+  -e AMESH_SECRET=change-me \
+  ghcr.io/jtsang4/amesh:latest
+```
+
+`AMESH_SECRET` is required — the hub refuses to start without one. The SQLite database lives in `/data`; keep it on a volume. Pin a version with `ghcr.io/jtsang4/amesh:0.0.4`. Environments and agents still install the binary below; the image is for the hub service.
 
 ## Install
 
