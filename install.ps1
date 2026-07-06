@@ -72,7 +72,7 @@ try {
 	if (Test-ManageDaemon) {
 		$Config = Join-Path $AmeshHome "config.toml"
 		if (-not (Test-Path $Config)) {
-			throw "daemon management needs $Config; run amesh init, then rerun with AMESH_DAEMON=1"
+			throw "amesh binary installed, but daemon setup needs $Config; run amesh init, then rerun with AMESH_DAEMON=1"
 		}
 
 		New-Item -ItemType Directory -Path $AmeshHome -Force | Out-Null

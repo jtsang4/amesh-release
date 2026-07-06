@@ -95,6 +95,7 @@ manage_launchd_daemon() {
 
 	binary_xml=$(xml_escape "$install_dir/amesh")
 	home_xml=$(xml_escape "$amesh_home")
+	path_xml=$(xml_escape "$PATH")
 	stdout_xml=$(xml_escape "$log_dir/daemon.log")
 	stderr_xml=$(xml_escape "$log_dir/daemon.err.log")
 
@@ -115,6 +116,8 @@ manage_launchd_daemon() {
 	<dict>
 		<key>AMESH_HOME</key>
 		<string>$home_xml</string>
+		<key>PATH</key>
+		<string>$path_xml</string>
 	</dict>
 	<key>RunAtLoad</key>
 	<true/>
@@ -147,6 +150,7 @@ Description=amesh daemon
 [Service]
 ExecStart=$install_dir/amesh daemon run
 Environment=AMESH_HOME=$amesh_home
+Environment="PATH=$PATH"
 Restart=always
 RestartSec=5
 StandardOutput=append:$log_dir/daemon.log
@@ -159,12 +163,15 @@ EOF
 	systemctl --user daemon-reload
 	systemctl --user enable --now "$systemd_unit"
 	systemctl --user restart "$systemd_unit"
+	if command -v loginctl >/dev/null 2>&1 && ! loginctl enable-linger >/dev/null 2>&1; then
+		echo "note: could not enable linger; the daemon stops at logout (run: loginctl enable-linger $(id -un))" >&2
+	fi
 	echo "amesh daemon managed by systemd user unit: $systemd_unit"
 }
 
 if should_manage_daemon; then
 	if [ ! -f "$amesh_home/config.toml" ]; then
-		echo "daemon management needs $amesh_home/config.toml; run amesh init, then rerun with AMESH_DAEMON=1" >&2
+		echo "amesh binary installed, but daemon setup needs $amesh_home/config.toml; run amesh init, then rerun with AMESH_DAEMON=1" >&2
 		exit 1
 	fi
 	case "$os" in

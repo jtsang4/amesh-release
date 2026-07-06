@@ -11,7 +11,7 @@ curl -fsSL https://raw.githubusercontent.com/jtsang4/amesh-release/main/install.
 Install a specific version:
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/jtsang4/amesh-release/main/install.sh | AMESH_VERSION=v0.1.1 sh
+curl -fsSL https://raw.githubusercontent.com/jtsang4/amesh-release/main/install.sh | AMESH_VERSION=v0.0.2 sh
 ```
 
 Set the install directory:
@@ -32,6 +32,8 @@ Future installs restart an already managed daemon automatically. Disable daemon 
 curl -fsSL https://raw.githubusercontent.com/jtsang4/amesh-release/main/install.sh | AMESH_DAEMON=0 sh
 ```
 
+The daemon service captures your `PATH` at install time so it can find runtime CLIs like `claude` or `codex`; rerun the installer after installing a new runtime. On Linux the installer also enables `loginctl` linger so the daemon survives logout.
+
 ## Windows
 
 Install with PowerShell:
@@ -51,3 +53,5 @@ Future installs restart an already managed daemon automatically. Disable daemon 
 ```powershell
 $env:AMESH_DAEMON = "0"; irm https://raw.githubusercontent.com/jtsang4/amesh-release/main/install.ps1 | iex
 ```
+
+Waking runtimes from the daemon runs commands through `sh`, so `sh` must be on `PATH` (it ships with Git for Windows).
